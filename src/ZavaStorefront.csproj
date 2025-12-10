@@ -7,7 +7,9 @@
     <UserSecretsId>bf44e742-79e2-403b-85c4-070d9d765dd5</UserSecretsId>
   </PropertyGroup>
 
-   <ItemGroup>
- </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Azure.AI.OpenAI" Version="2.1.0" />
+    <PackageReference Include="Azure.Identity" Version="1.13.2" />
+  </ItemGroup>
 
 </Project>

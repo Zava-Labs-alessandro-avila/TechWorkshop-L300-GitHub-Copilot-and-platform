@@ -32,8 +32,8 @@ jobs:
             --registry ${{ env.ACR_NAME }} \
             --image ${{ env.IMAGE_NAME }}:${{ github.sha }} \
             --image ${{ env.IMAGE_NAME }}:latest \
-            --file src/Dockerfile \
-            src
+            --file Dockerfile \
+            .
 
       - name: Deploy to App Service
         run: |

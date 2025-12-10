@@ -91,7 +91,6 @@ htmlcov/
 .ipynb_checkpoints
 
 # Docker
-**/Dockerfile*
 **/.dockerignore
 docker-compose.override.yml
 

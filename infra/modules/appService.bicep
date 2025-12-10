@@ -4,6 +4,7 @@ param planSkuName string
 param planSkuTier string
 param imageName string
 param applicationInsightsWorkspaceId string
+param azureOpenAIEndpoint string = ''
 
 resource ai 'Microsoft.Insights/components@2020-02-02' = {
   name: '${appName}-ai'
@@ -59,6 +60,14 @@ resource web 'Microsoft.Web/sites@2023-12-01' = {
         {
           name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
           value: '~3'
+        }
+        {
+          name: 'AzureAIFoundry__Endpoint'
+          value: azureOpenAIEndpoint
+        }
+        {
+          name: 'AzureAIFoundry__DeploymentName'
+          value: 'gpt-4o-mini'
         }
       ]
     }

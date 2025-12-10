@@ -32,6 +32,18 @@ module logAnalytics 'modules/logAnalytics.bicep' = {
   }
 }
 
+// Microsoft Foundry (Azure OpenAI) for GPT-4 and Phi
+// Note: OpenAI deployed to eastus for model availability; app remains in westus3
+module foundry 'modules/foundry.bicep' = {
+  name: 'foundry'
+  params: {
+    name: '${appName}-openai'
+    location: 'eastus'
+    sku: 'S0'
+    kind: 'OpenAI'
+  }
+}
+
 module appService 'modules/appService.bicep' = {
   name: 'appService'
   params: {
@@ -41,6 +53,7 @@ module appService 'modules/appService.bicep' = {
     planSkuTier: appServicePlanSkuTier
     imageName: '${acr.outputs.loginServer}/${appName}:latest'
     applicationInsightsWorkspaceId: logAnalytics.outputs.workspaceId
+    azureOpenAIEndpoint: foundry.outputs.cognitiveServicesEndpoint
   }
 }
 
@@ -53,15 +66,12 @@ module acrPullRole 'modules/roleAssignment.bicep' = {
   }
 }
 
-// Microsoft Foundry (Azure OpenAI) for GPT-4 and Phi
-// Note: OpenAI deployed to eastus for model availability; app remains in westus3
-module foundry 'modules/foundry.bicep' = {
-  name: 'foundry'
+// Role assignment: Web App managed identity gets Cognitive Services User on Azure OpenAI
+module cognitiveServicesRole 'modules/cognitiveServicesRoleAssignment.bicep' = {
+  name: 'cognitiveServicesRole'
   params: {
-    name: '${appName}-openai'
-    location: 'eastus'
-    sku: 'S0'
-    kind: 'OpenAI'
+    principalId: appService.outputs.webAppPrincipalId
+    cognitiveServicesName: foundry.outputs.cognitiveServicesName
   }
 }
 

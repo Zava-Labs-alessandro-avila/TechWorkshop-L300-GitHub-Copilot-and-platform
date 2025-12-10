@@ -67,9 +67,40 @@ namespace ZavaStorefront.Services
                     Error = "No response received from AI service."
                 };
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                _logger.LogError(ex, "Error getting chat response");
+                _logger.LogError(ex, "Invalid argument error in chat response generation");
+                return new ChatResponse
+                {
+                    Success = false,
+                    Error = "Invalid settings for chat request. Please contact an administrator."
+                };
+            }
+            catch (Azure.Identity.CredentialUnavailableException ex)
+            {
+                _logger.LogError(ex, "Azure credential unavailable");
+                return new ChatResponse
+                {
+                    Success = false,
+                    Error = "Unable to authenticate with Azure. Please check service credentials."
+                };
+            }
+            catch (Azure.RequestFailedException ex)
+            {
+                _logger.LogError(ex, "Request to Azure OpenAI failed");
+                return new ChatResponse
+                {
+                    Success = false,
+                    Error = $"Chat service request failed: {ex.Message}"
+                };
+            }
+            catch (Exception ex) when (
+                !(ex is OutOfMemoryException) &&
+                !(ex is StackOverflowException) &&
+                !(ex is ThreadAbortException)
+            )
+            {
+                _logger.LogError(ex, "Unexpected error getting chat response");
                 return new ChatResponse
                 {
                     Success = false,
